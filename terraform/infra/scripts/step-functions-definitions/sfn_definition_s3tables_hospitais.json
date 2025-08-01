@@ -1,0 +1,258 @@
+{
+  "Comment": "Orquestração ETL Glue Hospital App GenAI",
+  "StartAt": "parallel_dims",
+  "States": {
+    "parallel_dims": {
+      "Type": "Parallel",
+      "Branches": [
+        {
+          "StartAt": "stg_hospitais",
+          "States": {
+            "stg_hospitais": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::glue:startJobRun.sync",
+              "Parameters": {
+                "JobName": "datahandson-genai-raw-staged-todas-tabelas",
+                "Arguments": {
+                  "--primary_keys": "id_hospital",
+                  "--output_table": "hospitais",
+                  "--output_namespace": "staged",
+                  "--s3_tables_bucket_arn": "arn:aws:s3tables:us-east-2:296735965303:bucket/datahandon-genai-hospital",
+                  "--table": "hospitais",
+                  "--s3_path_raw": "s3://cjmm-mds-lake-raw/hospital_datahandson_parquet/public/"
+                }
+              },
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "stg_profissionais",
+          "States": {
+            "stg_profissionais": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::glue:startJobRun.sync",
+              "Parameters": {
+                "JobName": "datahandson-genai-raw-staged-todas-tabelas",
+                "Arguments": {
+                  "--primary_keys": "id_profissional",
+                  "--output_table": "profissionais_saude",
+                  "--output_namespace": "staged",
+                  "--s3_tables_bucket_arn": "arn:aws:s3tables:us-east-2:296735965303:bucket/datahandon-genai-hospital",
+                  "--table": "profissionais_saude",
+                  "--s3_path_raw": "s3://cjmm-mds-lake-raw/hospital_datahandson_parquet/public/"
+                }
+              },
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "stg_consultas",
+          "States": {
+            "stg_consultas": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::glue:startJobRun.sync",
+              "Parameters": {
+                "JobName": "datahandson-genai-raw-staged-todas-tabelas",
+                "Arguments": {
+                  "--primary_keys": "id_consulta",
+                  "--output_table": "consultas",
+                  "--output_namespace": "staged",
+                  "--s3_tables_bucket_arn": "arn:aws:s3tables:us-east-2:296735965303:bucket/datahandon-genai-hospital",
+                  "--table": "consultas",
+                  "--s3_path_raw": "s3://cjmm-mds-lake-raw/hospital_datahandson_parquet/public/"
+                }
+              },
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "stg_exames",
+          "States": {
+            "stg_exames": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::glue:startJobRun.sync",
+              "Parameters": {
+                "JobName": "datahandson-genai-raw-staged-todas-tabelas",
+                "Arguments": {
+                  "--primary_keys": "id_exame",
+                  "--output_table": "exames",
+                  "--output_namespace": "staged",
+                  "--s3_tables_bucket_arn": "arn:aws:s3tables:us-east-2:296735965303:bucket/datahandon-genai-hospital",
+                  "--table": "exames",
+                  "--s3_path_raw": "s3://cjmm-mds-lake-raw/hospital_datahandson_parquet/public/"
+                }
+              },
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "stg_receitas",
+          "States": {
+            "stg_receitas": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::glue:startJobRun.sync",
+              "Parameters": {
+                "JobName": "datahandson-genai-raw-staged-todas-tabelas",
+                "Arguments": {
+                  "--primary_keys": "id_receita",
+                  "--output_table": "receitas",
+                  "--output_namespace": "staged",
+                  "--s3_tables_bucket_arn": "arn:aws:s3tables:us-east-2:296735965303:bucket/datahandon-genai-hospital",
+                  "--table": "receitas",
+                  "--s3_path_raw": "s3://cjmm-mds-lake-raw/hospital_datahandson_parquet/public/"
+                }
+              },
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "stg_internacoes",
+          "States": {
+            "stg_internacoes": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::glue:startJobRun.sync",
+              "Parameters": {
+                "JobName": "datahandson-genai-raw-staged-todas-tabelas",
+                "Arguments": {
+                  "--primary_keys": "id_internacao",
+                  "--output_table": "internacoes",
+                  "--output_namespace": "staged",
+                  "--s3_tables_bucket_arn": "arn:aws:s3tables:us-east-2:296735965303:bucket/datahandon-genai-hospital",
+                  "--table": "internacoes",
+                  "--s3_path_raw": "s3://cjmm-mds-lake-raw/hospital_datahandson_parquet/public/"
+                }
+              },
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "stg_procedimentos",
+          "States": {
+            "stg_procedimentos": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::glue:startJobRun.sync",
+              "Parameters": {
+                "JobName": "datahandson-genai-raw-staged-todas-tabelas",
+                "Arguments": {
+                  "--primary_keys": "id_procedimento",
+                  "--output_table": "procedimentos",
+                  "--output_namespace": "staged",
+                  "--s3_tables_bucket_arn": "arn:aws:s3tables:us-east-2:296735965303:bucket/datahandon-genai-hospital",
+                  "--table": "procedimentos",
+                  "--s3_path_raw": "s3://cjmm-mds-lake-raw/hospital_datahandson_parquet/public/"
+                }
+              },
+              "End": true
+            }
+          }
+        }
+      ],
+      "Next": "processar_dim_e_fato"
+    },
+
+    "processar_dim_e_fato": {
+      "Type": "Parallel",
+      "Branches": [
+        {
+          "StartAt": "dim_hospital",
+          "States": {
+            "dim_hospital": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::glue:startJobRun.sync",
+              "Parameters": {
+                "JobName": "datahandson-genai-staged-curated-todas-tabelas",
+                "Arguments": {
+                  "--output_table": "dim_hospital",
+                  "--table_stg": "hospitais",
+                  "--output_namespace": "curated",
+                  "--namespace_stg": "staged",
+                  "--s3_tables_bucket_arn": "arn:aws:s3tables:us-east-2:296735965303:bucket/datahandon-genai-hospital"
+                }
+              },
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "dim_profissional",
+          "States": {
+            "dim_profissional": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::glue:startJobRun.sync",
+              "Parameters": {
+                "JobName": "datahandson-genai-staged-curated-todas-tabelas",
+                "Arguments": {
+                  "--output_table": "dim_profissional",
+                  "--table_stg": "profissionais",
+                  "--output_namespace": "curated",
+                  "--namespace_stg": "staged",
+                  "--s3_tables_bucket_arn": "arn:aws:s3tables:us-east-2:296735965303:bucket/datahandon-genai-hospital"
+                }
+              },
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "fato_consultas_procedimentos",
+          "States": {
+            "fato_consultas_procedimentos": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::glue:startJobRun.sync",
+              "Parameters": {
+                "JobName": "datahandson-genai-staged-curated-todas-tabelas",
+                "Arguments": {
+                  "--output_table": "fato_consultas_procedimentos",
+                  "--table_stg": "consultas,procedimentos",
+                  "--output_namespace": "curated",
+                  "--namespace_stg": "staged",
+                  "--s3_tables_bucket_arn": "arn:aws:s3tables:us-east-2:296735965303:bucket/datahandon-genai-hospital"
+                }
+              },
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "fato_exames_receitas",
+          "States": {
+            "fato_exames_receitas": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::glue:startJobRun.sync",
+              "Parameters": {
+                "JobName": "datahandson-genai-staged-curated-todas-tabelas",
+                "Arguments": {
+                  "--output_table": "fato_exames_receitas",
+                  "--table_stg": "exames,receitas",
+                  "--output_namespace": "curated",
+                  "--namespace_stg": "staged",
+                  "--s3_tables_bucket_arn": "arn:aws:s3tables:us-east-2:296735965303:bucket/datahandon-genai-hospital"
+                }
+              },
+              "End": true
+            }
+          }
+        }
+      ],
+      "Next": "gdq_dims_facts"
+    },
+    "gdq_dims_facts": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+      "Parameters": {
+        "JobName": "datahandson-genai-gdq-dims-facts",
+        "Arguments": {
+          "--namespace": "curated",
+          "--s3_tables_bucket_arn": "arn:aws:s3tables:us-east-2:296735965303:bucket/datahandon-genai-hospital"
+        }
+      },
+      "End": true
+    }
+  }
+}

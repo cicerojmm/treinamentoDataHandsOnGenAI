@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  streamlit:
+    build: .
+    ports:
+      - "8501:8501"
+    environment:
+      - AWS_REGION=us-east-2
+    volumes:
+      - ~/.aws:/root/.aws:ro
+      - .:/app
+    restart: unless-stopped
