@@ -57,13 +57,6 @@ def create_output_table_if_not_exists(spark, df, namespace, table_name):
 
 
 def write_output_table(spark, df, namespace, table_name, primary_key):
-#     df.createOrReplaceTempView("curated_view")
-#     spark.sql(
-#         f"""
-#         INSERT OVERWRITE {namespace}.{table_name}
-#         SELECT * FROM curated_view
-#     """
-#     )
     df.createOrReplaceTempView("source_view")
 
     columns = df.columns

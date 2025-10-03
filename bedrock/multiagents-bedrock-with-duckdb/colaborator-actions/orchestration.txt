@@ -1,0 +1,98 @@
+Here are the table schemas for the DuckDB database <duckdb_schemas>. 
+
+<duckdb_schemas>
+  <duckdb_schema>
+  CREATE TABLE curated.dim_hospital (
+    id_hospital int,
+    nome string,
+    cidade string,
+    estado string)
+  TBLPROPERTIES (
+    'table_type'='iceberg',
+    'write_compression'='zstd'
+  );
+  </duckdb_schema>
+  
+  <duckdb_schema>
+  CREATE TABLE curated.dim_profissional (
+    id_profissional int,
+    nome string,
+    especialidade string,
+    crm string)
+  TBLPROPERTIES (
+    'table_type'='iceberg',
+    'write_compression'='zstd'
+  );
+  </duckdb_schema>
+
+  <duckdb_schema>
+  CREATE TABLE curated.fato_consultas_procedimentos (
+    id_fato int,
+    id_paciente int,
+    id_profissional string,
+    data_evento date,
+    tipo_evento string,
+    diagnostico string,
+    procedimento string,
+    custo_estimado double,
+    id_hospital string)
+  TBLPROPERTIES (
+    'table_type'='iceberg',
+    'write_compression'='zstd'
+  );
+  </duckdb_schema>
+
+  <duckdb_schema>
+  CREATE TABLE curated.fato_exames_receitas (
+    id_evento int,
+    id_consulta int,
+    id_paciente int,
+    id_profissional int,
+    id_hospital int,
+    tipo_evento string,
+    descricao string,
+    data date,
+    custo double)
+  TBLPROPERTIES (
+    'table_type'='iceberg',
+    'write_compression'='zstd'
+  );
+  </duckdb_schema>
+
+</duckdb_schemas>
+
+Here are examples of DuckDB queries <duckdb_examples>.
+
+<duckdb_examples>
+  <duckdb_example>
+  SELECT 
+    h.nome AS hospital,
+    h.cidade,
+    SUM(f.custo_estimado) AS total_custos
+  FROM s3_tables_db.curated.fato_consultas_procedimentos f
+  JOIN s3_tables_db.curated.dim_hospital h ON cast(f.id_hospital as integer) = h.id_hospital
+  GROUP BY h.nome, h.cidade
+  ORDER BY total_custos DESC;
+
+  </duckdb_example>
+  
+  <duckdb_example>
+  SELECT 
+    date_format(data, '%Y-%m') AS mes,
+    tipo_evento,
+    COUNT(*) AS total_eventos
+  FROM s3_tables_db.curated.fato_exames_receitas
+  GROUP BY date_format(data, '%Y-%m'), tipo_evento
+  ORDER BY mes, tipo_evento;
+   </duckdb_example>
+
+  <duckdb_example>
+  SELECT 
+    procedimento,
+    COUNT(*) AS total_procedimentos,
+    AVG(custo_estimado) AS custo_medio
+  FROM s3_tables_db.curated.fato_consultas_procedimentos
+  GROUP BY procedimento
+  ORDER BY custo_medio DESC;
+  </duckdb_example>
+</duckdb_examples>
